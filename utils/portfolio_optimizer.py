@@ -81,7 +81,12 @@ class PortfolioOptimizer:
                     'weights': result.x
                 })
 
-        return pd.DataFrame(efficient_portfolios)
+        df = pd.DataFrame(efficient_portfolios)
+        df = df.rename(columns={
+            'expected_return': 'expected_return',
+            'volatility': 'volatility'
+        })
+        return df
 
     def get_optimal_portfolio(self):
         """Get the optimal portfolio allocation"""
