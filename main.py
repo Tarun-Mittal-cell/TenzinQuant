@@ -53,7 +53,7 @@ if page == "Stock Analysis":
 
         # Get news and sentiment
         news, volume = get_market_sentiment(symbol)
-        sentiment_score, sentiment_label = analyze_news_sentiment(news)
+        sentiment_score, sentiment_label, detailed_sentiments = analyze_news_sentiment(news)
 
         # Calculate metrics
         metrics = calculate_metrics(df)
@@ -102,6 +102,76 @@ if page == "Stock Analysis":
         )
 
         st.plotly_chart(fig, use_container_width=True)
+
+        # Enhanced Sentiment Analysis Section
+        st.subheader("Market Sentiment Analysis")
+
+        # Get detailed sentiment analysis
+        news, volume = get_market_sentiment(symbol)
+        sentiment_score, sentiment_label, detailed_sentiments = analyze_news_sentiment(news)
+
+        # Create sentiment trend visualization
+        if detailed_sentiments:
+            sentiment_df = pd.DataFrame(detailed_sentiments)
+            sentiment_df['datetime'] = pd.to_datetime(sentiment_df['timestamp'], unit='s')
+
+            fig_sentiment = go.Figure()
+
+            # Add sentiment trend line
+            fig_sentiment.add_trace(go.Scatter(
+                x=sentiment_df['datetime'],
+                y=sentiment_df['compound'],
+                name='Sentiment Score',
+                line=dict(color='cyan', width=2)
+            ))
+
+            # Add positive/negative bands
+            fig_sentiment.add_trace(go.Scatter(
+                x=sentiment_df['datetime'],
+                y=sentiment_df['positive'],
+                name='Positive',
+                fill=None,
+                line=dict(color='green', width=1)
+            ))
+
+            fig_sentiment.add_trace(go.Scatter(
+                x=sentiment_df['datetime'],
+                y=sentiment_df['negative'],
+                name='Negative',
+                fill=None,
+                line=dict(color='red', width=1)
+            ))
+
+            fig_sentiment.update_layout(
+                template='plotly_dark',
+                title='Sentiment Trend Analysis',
+                xaxis_title='Date',
+                yaxis_title='Sentiment Score',
+                height=400
+            )
+
+            st.plotly_chart(fig_sentiment, use_container_width=True)
+
+            # Source Credibility Analysis
+            st.subheader("News Source Analysis")
+            sources = set(s['source'] for s in detailed_sentiments)
+            source_data = []
+
+            def calculate_source_credibility(source, sentiments):
+                # Placeholder function - replace with actual credibility calculation
+                return np.random.rand()
+
+
+            for source in sources:
+                credibility = calculate_source_credibility(source, detailed_sentiments)
+                source_data.append({
+                    'Source': source,
+                    'Credibility Score': f"{credibility:.2f}",
+                    'Sentiment Impact': f"{np.mean([s['compound'] for s in detailed_sentiments if s['source'] == source]):.2f}"
+                })
+
+            source_df = pd.DataFrame(source_data)
+            st.table(source_df)
 
         # Metrics and insights
         col1, col2 = st.columns(2)
