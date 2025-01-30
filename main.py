@@ -121,17 +121,9 @@ if df is not None and not df.empty:
     # Recent news
     st.subheader("Recent News")
     for article in news:
-        if isinstance(article, dict):
-            title = article.get('title', 'No title available')
-            publisher = article.get('publisher', 'Unknown publisher')
-            publish_time = article.get('providerPublishTime', None)
-            
-            st.markdown(f"**{title}**")
-            if publish_time:
-                st.markdown(f"*{publisher}* - {datetime.fromtimestamp(publish_time).strftime('%Y-%m-%d %H:%M:%S')}")
-            else:
-                st.markdown(f"*{publisher}*")
-            st.markdown("---")
+        st.markdown(f"**{article['title']}**")
+        st.markdown(f"*{article['publisher']}* - {datetime.fromtimestamp(article['providerPublishTime']).strftime('%Y-%m-%d %H:%M:%S')}")
+        st.markdown("---")
 
 else:
     st.error("Unable to fetch data for the specified stock symbol. Please check the symbol and try again.")
