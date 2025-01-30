@@ -14,7 +14,7 @@ httpx
 # Data sources
 yfinance
 pandas-datareader
-opensi
+openai
 
 # Machine learning
 scikit-learn
