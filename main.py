@@ -8,7 +8,7 @@ from utils.ml_models import StockPredictor
 from utils.nlp_analysis import analyze_news_sentiment, generate_insight
 from utils.portfolio_optimizer import PortfolioOptimizer
 
-# Page config
+# Page config with modern theme
 st.set_page_config(
     page_title="Tenzin Quantum - AI Stock Analysis",
     page_icon="📈",
@@ -20,9 +20,13 @@ st.set_page_config(
 with open('styles/custom.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Sidebar
+# Sidebar with modern styling
 st.sidebar.title("Tenzin Quantum")
-st.sidebar.markdown("AI-Powered Stock Analysis")
+st.sidebar.markdown("""
+<div style='text-align: center; padding: 1rem;'>
+    <h4 style='color: #1DB954;'>AI-Powered Stock Analysis</h4>
+</div>
+""", unsafe_allow_html=True)
 
 # Page selection
 page = st.sidebar.selectbox("Select Page", ["Stock Analysis", "Portfolio Optimization"])
@@ -59,48 +63,12 @@ if page == "Stock Analysis":
         metrics = calculate_metrics(df)
 
         # Layout
-        col1, col2, col3 = st.columns(3)
+        #Updated Metrics Display
+        display_metrics(current_price, prediction, sentiment_score, sentiment_label)
 
-        with col1:
-            st.metric("Current Price", f"${current_price:.2f}")
-        with col2:
-            pred_delta = prediction - current_price
-            st.metric("Predicted Price", f"${prediction:.2f}", f"{pred_delta:.2f}")
-        with col3:
-            st.metric("Market Sentiment", sentiment_label, f"{sentiment_score:.2f}")
 
         # Main chart
-        fig = go.Figure()
-        fig.add_trace(go.Candlestick(
-            x=df.index,
-            open=df['Open'],
-            high=df['High'],
-            low=df['Low'],
-            close=df['Close'],
-            name='OHLC'
-        ))
-
-        fig.add_trace(go.Scatter(
-            x=df.index,
-            y=metrics['MA50'],
-            name='MA50',
-            line=dict(color='orange', width=1)
-        ))
-
-        fig.add_trace(go.Scatter(
-            x=df.index,
-            y=metrics['MA200'],
-            name='MA200',
-            line=dict(color='blue', width=1)
-        ))
-
-        fig.update_layout(
-            template='plotly_dark',
-            xaxis_rangeslider_visible=False,
-            height=600,
-            title=f"{symbol} Stock Price"
-        )
-
+        fig = create_stock_chart(df, metrics)
         st.plotly_chart(fig, use_container_width=True)
 
         # Enhanced Sentiment Analysis Section
@@ -285,3 +253,107 @@ else:  # Portfolio Optimization page
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+def create_stock_chart(df, metrics):
+    fig = go.Figure()
+
+    # Candlestick chart
+    fig.add_trace(go.Candlestick(
+        x=df.index,
+        open=df['Open'],
+        high=df['High'],
+        low=df['Low'],
+        close=df['Close'],
+        name='OHLC',
+        increasing_line_color='#1DB954',
+        decreasing_line_color='#FF4B4B'
+    ))
+
+    # Moving averages with modern styling
+    fig.add_trace(go.Scatter(
+        x=df.index,
+        y=metrics['MA50'],
+        name='MA50',
+        line=dict(color='rgba(29, 185, 84, 0.8)', width=1.5, dash='dot'),
+        hovertemplate='MA50: %{y:.2f}<extra></extra>'
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=df.index,
+        y=metrics['MA200'],
+        name='MA200',
+        line=dict(color='rgba(255, 255, 255, 0.8)', width=1.5, dash='dot'),
+        hovertemplate='MA200: %{y:.2f}<extra></extra>'
+    ))
+
+    # Modern layout
+    fig.update_layout(
+        template='plotly_dark',
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        xaxis_rangeslider_visible=False,
+        height=600,
+        title={
+            'text': f"{symbol} Stock Price",
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': dict(size=24, color='#E2E2E2')
+        },
+        margin=dict(l=40, r=40, t=80, b=40),
+        showlegend=True,
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01,
+            bgcolor='rgba(0,0,0,0.5)'
+        ),
+        xaxis=dict(
+            showgrid=True,
+            gridwidth=1,
+            gridcolor='rgba(255,255,255,0.1)',
+            zeroline=False
+        ),
+        yaxis=dict(
+            showgrid=True,
+            gridwidth=1,
+            gridcolor='rgba(255,255,255,0.1)',
+            zeroline=False
+        )
+    )
+
+    return fig
+
+def display_metrics(current_price, prediction, sentiment_score, sentiment_label):
+    cols = st.columns(3)
+
+    with cols[0]:
+        st.markdown("""
+        <div class="metric-container">
+            <h3>Current Price</h3>
+            <h2 style="color: #1DB954;">$%.2f</h2>
+        </div>
+        """ % current_price, unsafe_allow_html=True)
+
+    with cols[1]:
+        pred_delta = prediction - current_price
+        delta_color = "#1DB954" if pred_delta >= 0 else "#FF4B4B"
+        st.markdown(f"""
+        <div class="metric-container">
+            <h3>Predicted Price</h3>
+            <h2 style="color: {delta_color};">$%.2f</h2>
+            <p style="color: {delta_color};">%.2f</p>
+        </div>
+        """ % (prediction, pred_delta), unsafe_allow_html=True)
+
+    with cols[2]:
+        sentiment_color = "#1DB954" if sentiment_score >= 0 else "#FF4B4B"
+        st.markdown(f"""
+        <div class="metric-container">
+            <h3>Market Sentiment</h3>
+            <h2 style="color: {sentiment_color};">{sentiment_label}</h2>
+            <p style="color: {sentiment_color};">%.2f</p>
+        </div>
+        """ % sentiment_score, unsafe_allow_html=True)

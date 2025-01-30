@@ -1,32 +1,104 @@
 /* Custom CSS for futuristic styling */
 .stApp {
     background: linear-gradient(to bottom, #0E1117, #1A1C24);
+    color: #E2E2E2;
 }
 
+/* Sidebar styling */
+.css-1d391kg {
+    background: rgba(14, 17, 23, 0.8);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Cards and containers */
+.element-container, div.stDataFrame {
+    background: rgba(38, 39, 48, 0.6);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+}
+
+.element-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Metrics styling */
+.stMetric {
+    background: linear-gradient(45deg, rgba(61, 61, 61, 0.3), rgba(41, 41, 41, 0.3));
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.stMetric:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+/* Button styling */
 .stButton > button {
-    background: linear-gradient(45deg, #FF4B4B, #FF6B6B);
+    background: linear-gradient(45deg, #1DB954, #1ED760);
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     color: white;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.2);
 }
 
 .stButton > button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 75, 75, 0.3);
+    box-shadow: 0 8px 24px rgba(29, 185, 84, 0.3);
 }
 
-.custom-metric-container {
-    background: rgba(38, 39, 48, 0.8);
-    border-radius: 10px;
+/* Charts and plots */
+.js-plotly-plot {
+    border-radius: 15px;
+    background: rgba(38, 39, 48, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.js-plotly-plot:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Headers */
+h1, h2, h3 {
+    color: #E2E2E2;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 1.5rem;
+}
+
+/* Tables */
+.dataframe {
+    border-radius: 10px;
+    overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.custom-chart {
-    border-radius: 10px;
-    background: rgba(38, 39, 48, 0.8);
-    padding: 1rem;
-    margin: 1rem 0;
+.dataframe th {
+    background: rgba(29, 185, 84, 0.1);
+    color: #E2E2E2;
+    font-weight: 600;
+}
+
+/* Animations */
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(29, 185, 84, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(29, 185, 84, 0.4); }
+    100% { box-shadow: 0 0 5px rgba(29, 185, 84, 0.2); }
 }
