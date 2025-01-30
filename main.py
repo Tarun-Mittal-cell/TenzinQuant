@@ -1,3 +1,5 @@
+import streamlit as st
+
 # Page config with modern theme
 st.set_page_config(
     page_title="Tenzin Quantum - AI Stock Analysis",
