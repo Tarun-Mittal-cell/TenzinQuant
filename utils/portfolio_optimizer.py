@@ -1,103 +1,75 @@
-import numpy as np
 import pandas as pd
+import numpy as np
 from scipy.optimize import minimize
-import yfinance as yf
 
 class PortfolioOptimizer:
-    def __init__(self, symbols, start_date=None, end_date=None):
-        self.symbols = symbols
-        self.start_date = start_date
-        self.end_date = end_date
-        self.returns = None
-        self.mean_returns = None
-        self.cov_matrix = None
-
-    def fetch_data(self):
-        """Fetch historical data for all symbols"""
-        data = pd.DataFrame()
-        for symbol in self.symbols:
-            stock = yf.Ticker(symbol)
-            hist = stock.history(period='1y')['Close']
-            data[symbol] = hist
-
-        # Calculate daily returns
-        self.returns = data.pct_change()
-        self.mean_returns = self.returns.mean()
-        self.cov_matrix = self.returns.cov()
-
-        return self.returns
-
-    def portfolio_performance(self, weights):
-        """Calculate portfolio performance metrics"""
-        returns = np.sum(self.mean_returns * weights) * 252  # Annualized returns
-        risk = np.sqrt(np.dot(weights.T, np.dot(self.cov_matrix * 252, weights)))
-        sharpe_ratio = returns / risk  # Assuming risk-free rate = 0
-        return returns, risk, sharpe_ratio
-
-    def optimize_portfolio(self):
-        """Find the optimal portfolio weights"""
-        num_assets = len(self.symbols)
-        constraints = [
-            {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}  # weights sum to 1
+    def __init__(self):
+        self.risk_free_rate = 0.02  # 2% risk-free rate
+        
+    def analyze_portfolio(self):
+        # Simulate portfolio analysis for demo
+        dates = pd.date_range(start='2024-01-01', end='2024-01-30', freq='D')
+        portfolio_values = np.random.normal(loc=1000000, scale=50000, size=len(dates))
+        portfolio_values = np.sort(portfolio_values)  # Make it trend upward
+        
+        return pd.DataFrame({
+            'Date': dates,
+            'Portfolio Value': portfolio_values
+        }).set_index('Date')
+    
+    def get_recommendations(self):
+        # Simulate portfolio recommendations for demo
+        recommendations = [
+            {
+                'Asset': 'Technology ETF',
+                'Action': 'Increase Allocation',
+                'Target Weight': '25%',
+                'Rationale': 'Strong sector growth potential'
+            },
+            {
+                'Asset': 'Government Bonds',
+                'Action': 'Decrease Allocation',
+                'Target Weight': '15%',
+                'Rationale': 'Rising interest rate environment'
+            }
         ]
-        bounds = tuple((0, 1) for _ in range(num_assets))  # weights between 0 and 1
-
-        # Initial guess (equal weights)
-        init_weights = np.array([1/num_assets] * num_assets)
-
-        # Optimize for Sharpe Ratio
-        def objective(weights):
-            return -self.portfolio_performance(weights)[2]  # Negative for minimization
-
-        result = minimize(objective, init_weights, method='SLSQP',
-                         bounds=bounds, constraints=constraints)
-
-        return result.x
-
-    def efficient_frontier(self, num_portfolios=100):
-        """Generate efficient frontier points"""
-        returns_range = np.linspace(self.mean_returns.min(), self.mean_returns.max(), num_portfolios)
-        efficient_portfolios = []
-        num_assets = len(self.symbols)
-
-        for ret in returns_range:
-            constraints = [
-                {'type': 'eq', 'fun': lambda x: np.sum(x) - 1},
-                {'type': 'eq', 'fun': lambda x: np.sum(self.mean_returns * x) * 252 - ret}
-            ]
-            bounds = tuple((0, 1) for _ in range(num_assets))
-
-            result = minimize(lambda x: np.sqrt(np.dot(x.T, np.dot(self.cov_matrix * 252, x))),
-                            np.array([1/num_assets] * num_assets),
-                            method='SLSQP',
-                            bounds=bounds,
-                            constraints=constraints)
-
-            if result.success:
-                risk = np.sqrt(np.dot(result.x.T, np.dot(self.cov_matrix * 252, result.x)))
-                efficient_portfolios.append({
-                    'expected_return': ret,
-                    'volatility': risk,
-                    'weights': result.x
-                })
-
-        df = pd.DataFrame([{
-            'volatility': p['volatility'],
-            'expected_return': p['expected_return']
-        } for p in efficient_portfolios])
-        return df
-
-    def get_optimal_portfolio(self):
-        """Get the optimal portfolio allocation"""
-        if self.returns is None:
-            self.fetch_data()
-
-        optimal_weights = self.optimize_portfolio()
-        returns, risk, sharpe = self.portfolio_performance(optimal_weights)
-
-        return {
-            'weights': dict(zip(self.symbols, optimal_weights)),
-            'expected_annual_return': returns,
-            'annual_volatility': risk,
-            'sharpe_ratio': sharpe
-        }
+        return pd.DataFrame(recommendations)
+    
+    def calculate_risk_metrics(self):
+        # Simulate risk metrics for demo
+        metrics = [
+            {
+                'Metric': 'Value at Risk (95%)',
+                'Value': '$25,000',
+                'Status': 'Within Limits'
+            },
+            {
+                'Metric': 'Sharpe Ratio',
+                'Value': '1.8',
+                'Status': 'Excellent'
+            },
+            {
+                'Metric': 'Beta',
+                'Value': '0.85',
+                'Status': 'Moderate Risk'
+            }
+        ]
+        return pd.DataFrame(metrics)
+    
+    def get_risk_strategies(self):
+        # Simulate risk management strategies for demo
+        strategies = [
+            {
+                'Strategy': 'Dynamic Hedging',
+                'Implementation': 'Use options to hedge downside risk',
+                'Cost': 'Medium',
+                'Expected Impact': 'Reduced volatility'
+            },
+            {
+                'Strategy': 'Sector Rotation',
+                'Implementation': 'Shift to defensive sectors',
+                'Cost': 'Low',
+                'Expected Impact': 'Improved risk-adjusted returns'
+            }
+        ]
+        return pd.DataFrame(strategies)

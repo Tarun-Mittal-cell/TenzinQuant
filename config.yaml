@@ -1,0 +1,79 @@
+# Authentication Configuration
+credentials:
+  usernames:
+    admin:
+      email: admin@example.com
+      name: Admin User
+      password: $2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewFyGQQxkQIhxmK6  # Password: admin123
+    demo:
+      email: demo@example.com
+      name: Demo User
+      password: $2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewFyGQQxkQIhxmK6  # Password: demo123
+
+cookie:
+  expiry_days: 30
+  key: random_signature_key
+  name: quantum_trader_cookie
+
+preauthorized:
+  emails:
+    - admin@example.com
+
+# API Configuration
+apis:
+  # Free alternative to OpenAI
+  huggingface:
+    model: "facebook/bart-large-mnli"  # Free model for sentiment analysis
+    
+  # Free market data sources
+  market_data:
+    - yfinance  # Yahoo Finance API (free)
+    - alpha_vantage_free  # Alpha Vantage free tier
+    - finnhub_sandbox  # Finnhub sandbox API
+    
+  # Free alternative NLP models
+  nlp_models:
+    sentiment: "finbert-tone"  # Financial sentiment analysis
+    news: "distilbert-base-uncased"  # News classification
+    
+# Real-time WebSocket Configuration
+websocket:
+  reconnect_interval: 1  # seconds
+  max_retries: 3
+  
+# Cache Configuration
+cache:
+  stock_data: 300  # 5 minutes
+  predictions: 900  # 15 minutes
+  sentiment: 1800  # 30 minutes
+  
+# UI Configuration
+ui:
+  theme: "dark"
+  colors:
+    background: "#0E1117"
+    text: "#E0E0E0"
+    primary: "#00FF9D"
+    secondary: "#FF00E5"
+    accent: "#00E5FF"
+  update_interval: 1000  # milliseconds
+  
+# Model Configuration
+models:
+  ensemble:
+    - type: "lstm"
+      layers: [64, 32]
+      dropout: 0.2
+    - type: "transformer"
+      heads: 4
+      layers: 2
+    - type: "xgboost"
+      max_depth: 6
+      learning_rate: 0.1
+      
+# Performance Optimization
+optimization:
+  cache_strategy: "aggressive"
+  batch_size: 32
+  workers: 4
+  use_gpu: true

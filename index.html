@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenzin Quantum Trading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            background-color: #0E1117;
+            color: #E0E0E0;
+        }
+        .card {
+            background-color: #1E1E1E;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .metric {
+            background-color: #2A2A2A;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        .positive { color: #1DB954; }
+        .negative { color: #FF4B4B; }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Tenzin Quantum Trading</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="metric">
+                <h3 class="text-sm text-gray-400">Total Value</h3>
+                <p id="totalValue" class="text-2xl font-bold">$0.00</p>
+            </div>
+            <div class="metric">
+                <h3 class="text-sm text-gray-400">Daily Return</h3>
+                <p id="dailyReturn" class="text-2xl font-bold">0.00%</p>
+            </div>
+            <div class="metric">
+                <h3 class="text-sm text-gray-400">Sharpe Ratio</h3>
+                <p id="sharpeRatio" class="text-2xl font-bold">0.00</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4">Portfolio Performance</h2>
+                <div id="chart"></div>
+            </div>
+            
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4">Asset Allocation</h2>
+                <div id="allocation"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('http://localhost:8000/api/portfolio');
+                const data = await response.json();
+                
+                // Update metrics
+                document.getElementById('totalValue').textContent = 
+                    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+                        .format(data.totalValue);
+                
+                const dailyReturn = document.getElementById('dailyReturn');
+                dailyReturn.textContent = `${data.dailyReturn.toFixed(2)}%`;
+                dailyReturn.className = `text-2xl font-bold ${data.dailyReturn >= 0 ? 'positive' : 'negative'}`;
+                
+                document.getElementById('sharpeRatio').textContent = data.sharpeRatio.toFixed(2);
+
+                // Create performance chart
+                const trace = {
+                    x: data.history.map(h => h.date),
+                    y: data.history.map(h => h.value),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: '#1DB954' }
+                };
+
+                const layout = {
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: { color: '#E0E0E0' },
+                    xaxis: {
+                        gridcolor: '#333',
+                        zerolinecolor: '#333'
+                    },
+                    yaxis: {
+                        gridcolor: '#333',
+                        zerolinecolor: '#333',
+                        tickformat: '$,.0f'
+                    },
+                    margin: { t: 20 }
+                };
+
+                Plotly.newPlot('chart', [trace], layout);
+
+                // Create allocation pie chart
+                const pieData = [{
+                    values: data.allocation.map(a => a.value),
+                    labels: data.allocation.map(a => a.asset),
+                    type: 'pie',
+                    marker: {
+                        colors: ['#1DB954', '#4A90E2', '#F5A623', '#D0021B']
+                    }
+                }];
+
+                const pieLayout = {
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: { color: '#E0E0E0' },
+                    margin: { t: 20, b: 20, l: 20, r: 20 },
+                    showlegend: true,
+                    legend: { orientation: 'h', y: -0.2 }
+                };
+
+                Plotly.newPlot('allocation', pieData, pieLayout);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Initial fetch
+        fetchData();
+
+        // Update every 5 seconds
+        setInterval(fetchData, 5000);
+    </script>
+</body>
+</html>
