@@ -1,12 +1,66 @@
+# Page config with modern theme
+st.set_page_config(
+    page_title="Tenzin Quantum - AI Stock Analysis",
+    page_icon="📈",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 import streamlit as st
+from utils.social_sentiment import MarketSentimentAnalyzer
+from utils.nlp_analysis import analyze_news_sentiment
 import plotly.graph_objects as go
-from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 from utils.stock_data import get_stock_data, calculate_metrics, get_market_sentiment
 from utils.ml_models import StockPredictor
-from utils.nlp_analysis import analyze_news_sentiment, generate_insight
 from utils.portfolio_optimizer import PortfolioOptimizer
+from datetime import datetime, timedelta
+
+# Add custom CSS for Tesla/SpaceX inspired theme
+st.markdown("""
+<style>
+    /* Tesla-inspired dark theme */
+    .stApp {
+        background-color: #000000;
+        color: #FFFFFF;
+    }
+
+    /* SpaceX-style headers */
+    h1, h2, h3 {
+        font-family: 'Roboto', sans-serif;
+        color: #FFFFFF;
+        font-weight: 500;
+    }
+
+    /* Tesla-style metrics container */
+    .metric-container {
+        background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+        border-radius: 10px;
+        padding: 1.5rem;
+        border: 1px solid #333;
+    }
+
+    /* Futuristic accent colors */
+    .highlight {
+        color: #1DB954;
+    }
+
+    .warning {
+        color: #FF4B4B;
+    }
+
+    /* SpaceX-style buttons */
+    .stButton > button {
+        background: linear-gradient(90deg, #1DB954, #147a38);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 def display_metrics(current_price, prediction, sentiment_score, sentiment_label):
     cols = st.columns(3)
@@ -112,14 +166,6 @@ def create_stock_chart(df, metrics, symbol):
 
     return fig
 
-# Page config with modern theme
-st.set_page_config(
-    page_title="Tenzin Quantum - AI Stock Analysis",
-    page_icon="📈",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
 # Load custom CSS
 with open('styles/custom.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -134,6 +180,118 @@ st.sidebar.markdown("""
 
 # Page selection
 page = st.sidebar.selectbox("Select Page", ["Stock Analysis", "Portfolio Optimization"])
+
+def display_sentiment_dashboard(symbol):
+    st.markdown("<h2 style='text-align: center; color: #1DB954;'>🚀 Neural Link Sentiment Analysis</h2>", unsafe_allow_html=True)
+
+    # Get news and analyze sentiment
+    news, volume = get_market_sentiment(symbol)
+    sentiment_analyzer = MarketSentimentAnalyzer()
+    sentiment_data, metrics = sentiment_analyzer.analyze_market_sentiment(news)
+
+    # Create futuristic metrics display
+    cols = st.columns(4)
+
+    # Neural Link Style Metrics
+    metrics_display = [
+        {"label": "Market Sentiment", "value": f"{metrics['overall_sentiment']:.2f}", "icon": "🌐"},
+        {"label": "Momentum", "value": f"{metrics['sentiment_momentum']:.2f}", "icon": "📈"},
+        {"label": "Impact Score", "value": f"{metrics['impact_score']:.1f}", "icon": "💫"},
+        {"label": "AI Confidence", "value": f"{metrics['confidence']*100:.0f}%", "icon": "🧠"}
+    ]
+
+    for col, metric in zip(cols, metrics_display):
+        with col:
+            st.markdown(f"""
+            <div class="metric-container">
+                <h3>{metric['icon']} {metric['label']}</h3>
+                <h2 class="highlight">{metric['value']}</h2>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # Create sentiment timeline
+    if sentiment_data:
+        df = pd.DataFrame(sentiment_data)
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
+        df = df.sort_values('timestamp')
+
+        fig = go.Figure()
+
+        # Add main sentiment line
+        fig.add_trace(go.Scatter(
+            x=df['timestamp'],
+            y=df['compound'],
+            name='Market Sentiment',
+            line=dict(color='#1DB954', width=2),
+            mode='lines+markers'
+        ))
+
+        # Add confidence bands
+        confidence_band = df['compound'].std()
+        fig.add_trace(go.Scatter(
+            x=df['timestamp'],
+            y=df['compound'] + confidence_band,
+            fill=None,
+            mode='lines',
+            line=dict(color='rgba(29, 185, 84, 0.1)'),
+            showlegend=False
+        ))
+
+        fig.add_trace(go.Scatter(
+            x=df['timestamp'],
+            y=df['compound'] - confidence_band,
+            fill='tonexty',
+            mode='lines',
+            line=dict(color='rgba(29, 185, 84, 0.1)'),
+            name='Confidence Band'
+        ))
+
+        # Update layout with futuristic theme
+        fig.update_layout(
+            template='plotly_dark',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            title={
+                'text': 'Neural Link Sentiment Timeline',
+                'y': 0.95,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top',
+                'font': dict(size=24, color='#1DB954')
+            },
+            margin=dict(l=40, r=40, t=80, b=40),
+            xaxis=dict(
+                showgrid=True,
+                gridwidth=1,
+                gridcolor='rgba(255,255,255,0.1)',
+                title='Timeline'
+            ),
+            yaxis=dict(
+                showgrid=True,
+                gridwidth=1,
+                gridcolor='rgba(255,255,255,0.1)',
+                title='Sentiment Strength'
+            )
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+        # Display recent sentiment sources
+        st.markdown("### 🔍 Recent Market Signals")
+        for item in sentiment_data[:5]:  # Show last 5 items
+            sentiment_color = "#1DB954" if item['compound'] > 0 else "#FF4B4B"
+            st.markdown(f"""
+            <div class="metric-container" style="margin-bottom: 10px;">
+                <p style="color: {sentiment_color}; margin-bottom: 5px;">
+                    {item['text']}
+                </p>
+                <small style="color: #666;">
+                    {item['source']} | Impact: {item['impact_score']:.2f} | 
+                    Sentiment: {item['compound']:.2f}
+                </small>
+            </div>
+            """, unsafe_allow_html=True)
+
 
 if page == "Stock Analysis":
     # Stock symbol input
@@ -174,6 +332,9 @@ if page == "Stock Analysis":
         # Main chart
         fig = create_stock_chart(df, metrics, symbol)
         st.plotly_chart(fig, use_container_width=True)
+
+        # Add the new sentiment dashboard after the metrics display
+        display_sentiment_dashboard(symbol)
 
         # Enhanced Sentiment Analysis Section
         st.subheader("Market Sentiment Analysis")
