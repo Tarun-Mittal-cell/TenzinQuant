@@ -1,0 +1,32 @@
+/* Custom CSS for futuristic styling */
+.stApp {
+    background: linear-gradient(to bottom, #0E1117, #1A1C24);
+}
+
+.stButton > button {
+    background: linear-gradient(45deg, #FF4B4B, #FF6B6B);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 75, 75, 0.3);
+}
+
+.custom-metric-container {
+    background: rgba(38, 39, 48, 0.8);
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-chart {
+    border-radius: 10px;
+    background: rgba(38, 39, 48, 0.8);
+    padding: 1rem;
+    margin: 1rem 0;
+}
