@@ -10,7 +10,7 @@ st.set_page_config(
 
 import streamlit as st
 from utils.social_sentiment import MarketSentimentAnalyzer
-from utils.nlp_analysis import analyze_news_sentiment
+from utils.nlp_analysis import analyze_news_sentiment, generate_insight
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
