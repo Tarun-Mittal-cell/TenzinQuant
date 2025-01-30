@@ -333,10 +333,11 @@ else:  # Portfolio Optimization page
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
-        x=frontier_df['risk'],
-        y=frontier_df['return'],
+        x=frontier_df['volatility'],
+        y=frontier_df['expected_return'],
         mode='lines',
-        name='Efficient Frontier'
+        name='Efficient Frontier',
+        line=dict(color='#1DB954', width=2)
     ))
 
     # Add current portfolio point
@@ -345,15 +346,45 @@ else:  # Portfolio Optimization page
         y=[optimal_portfolio['expected_annual_return']],
         mode='markers',
         name='Optimal Portfolio',
-        marker=dict(size=10, color='red')
+        marker=dict(size=12, color='#FF4B4B', symbol='star')
     ))
 
     fig.update_layout(
         template='plotly_dark',
-        title='Efficient Frontier',
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        title={
+            'text': 'Efficient Frontier',
+            'y': 0.95,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'font': dict(size=24, color='#E2E2E2')
+        },
         xaxis_title='Risk (Annual Volatility)',
         yaxis_title='Expected Annual Return',
-        height=500
+        height=500,
+        margin=dict(l=40, r=40, t=80, b=40),
+        showlegend=True,
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01,
+            bgcolor='rgba(0,0,0,0.5)'
+        ),
+        xaxis=dict(
+            showgrid=True,
+            gridwidth=1,
+            gridcolor='rgba(255,255,255,0.1)',
+            zeroline=False
+        ),
+        yaxis=dict(
+            showgrid=True,
+            gridwidth=1,
+            gridcolor='rgba(255,255,255,0.1)',
+            zeroline=False
+        )
     )
 
     st.plotly_chart(fig, use_container_width=True)
