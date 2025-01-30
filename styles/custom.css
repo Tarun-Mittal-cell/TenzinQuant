@@ -1,153 +1,182 @@
 /* Custom CSS for futuristic Musk-inspired styling */
+:root {
+    --neon-blue: #00f3ff;
+    --neon-green: #1DB954;
+    --dark-bg: #0E1117;
+    --darker-bg: #080a0c;
+}
+
 .stApp {
-    background: linear-gradient(135deg, #0E1117 0%, #1A1C24 100%);
+    background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
     color: #E2E2E2;
 }
 
-/* Sidebar styling */
-.css-1d391kg {
-    background: rgba(14, 17, 23, 0.95);
-    backdrop-filter: blur(15px);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+/* Holographic effect */
+@keyframes holographic {
+    0% { filter: hue-rotate(0deg) brightness(1); }
+    50% { filter: hue-rotate(30deg) brightness(1.2); }
+    100% { filter: hue-rotate(0deg) brightness(1); }
 }
 
-/* Cards and containers */
+/* Ambient glow animation */
+@keyframes ambientGlow {
+    0% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(29, 185, 84, 0.3); }
+    100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+}
+
+/* Cards and containers with holographic effect */
 .element-container, div.stDataFrame {
-    background: rgba(38, 39, 48, 0.8);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    padding: 1.25rem;
-    margin: 1.25rem 0;
+    background: rgba(14, 17, 23, 0.85);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 243, 255, 0.15);
+    backdrop-filter: blur(20px);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.element-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(0, 243, 255, 0.1),
+        rgba(29, 185, 84, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .element-container:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(29, 185, 84, 0.15);
-    border: 1px solid rgba(29, 185, 84, 0.3);
+    border-color: rgba(0, 243, 255, 0.4);
 }
 
-/* Metrics styling */
+.element-container:hover::before {
+    opacity: 1;
+    animation: holographic 3s infinite;
+}
+
+/* Graphs and charts with enhanced styling */
+.js-plotly-plot {
+    border-radius: 4px;
+    background: rgba(8, 10, 12, 0.9);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: ambientGlow 4s infinite;
+}
+
+.js-plotly-plot:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 243, 255, 0.4);
+}
+
+/* Metrics with neon glow */
 .metric-container {
-    background: linear-gradient(45deg, rgba(26, 27, 31, 0.9), rgba(34, 35, 40, 0.9));
-    border-radius: 12px;
-    border: 1px solid rgba(29, 185, 84, 0.2);
+    background: linear-gradient(45deg, 
+        rgba(8, 10, 12, 0.95),
+        rgba(14, 17, 23, 0.95));
+    border-radius: 4px;
+    border: 1px solid rgba(0, 243, 255, 0.2);
     padding: 1.5rem;
     margin: 1rem 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .metric-container:hover {
     transform: scale(1.02);
-    box-shadow: 0 0 30px rgba(29, 185, 84, 0.15);
+    animation: holographic 3s infinite;
 }
 
 .metric-container h2 {
     font-size: 2rem;
     margin: 0.5rem 0;
-    background: linear-gradient(90deg, #1DB954, #1ED760);
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
-/* Button styling */
+/* Sharp, futuristic buttons */
 .stButton > button {
-    background: linear-gradient(135deg, #1DB954, #1ED760);
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-green));
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     color: white;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.2px;
     padding: 0.75rem 1.5rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(29, 185, 84, 0.3);
-    background: linear-gradient(135deg, #1ED760, #1DB954);
+.stButton > button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: 0.5s;
 }
 
-/* Charts and plots */
-.js-plotly-plot {
-    border-radius: 12px;
-    background: rgba(38, 39, 48, 0.8);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 1.25rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.stButton > button:hover::before {
+    left: 100%;
 }
 
-.js-plotly-plot:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(29, 185, 84, 0.15);
-}
-
-/* Headers */
+/* Headers with neon glow */
 h1, h2, h3 {
     color: #FFFFFF;
     font-weight: 700;
     letter-spacing: 0.5px;
     margin-bottom: 1.5rem;
-    text-shadow: 0 2px 10px rgba(29, 185, 84, 0.2);
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
-/* Tables */
-.dataframe {
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid rgba(29, 185, 84, 0.2);
-    background: rgba(26, 27, 31, 0.9);
-}
-
-.dataframe th {
-    background: rgba(29, 185, 84, 0.15);
-    color: #FFFFFF;
-    font-weight: 600;
-    padding: 1rem;
-}
-
-.dataframe td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Input fields */
+/* Input fields with neon accents */
 .stTextInput > div > div {
-    background: rgba(38, 39, 48, 0.8);
-    border: 1px solid rgba(29, 185, 84, 0.2);
-    border-radius: 8px;
+    background: rgba(8, 10, 12, 0.9);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    border-radius: 4px;
     transition: all 0.3s ease;
 }
 
 .stTextInput > div > div:focus-within {
-    border-color: #1DB954;
-    box-shadow: 0 0 15px rgba(29, 185, 84, 0.2);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
 }
 
-/* Animations */
-@keyframes glow {
-    0% { box-shadow: 0 0 10px rgba(29, 185, 84, 0.2); }
-    50% { box-shadow: 0 0 25px rgba(29, 185, 84, 0.4); }
-    100% { box-shadow: 0 0 10px rgba(29, 185, 84, 0.2); }
-}
-
-/* Loading animations */
-.stProgress > div > div > div {
-    background: linear-gradient(90deg, #1DB954, #1ED760);
-}
-
-/* Selectbox styling */
+/* Selectbox with holographic effect */
 .stSelectbox > div > div {
-    background: rgba(38, 39, 48, 0.8);
-    border: 1px solid rgba(29, 185, 84, 0.2);
-    border-radius: 8px;
+    background: rgba(8, 10, 12, 0.9);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
 .stSelectbox > div > div:hover {
-    border-color: #1DB954;
+    border-color: var(--neon-blue);
+    animation: holographic 3s infinite;
+}
+
+/* Progress bars with gradient effect */
+.stProgress > div > div > div {
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
+    animation: holographic 3s infinite;
 }
