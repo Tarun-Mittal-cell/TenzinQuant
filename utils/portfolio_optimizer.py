@@ -81,11 +81,10 @@ class PortfolioOptimizer:
                     'weights': result.x
                 })
 
-        df = pd.DataFrame(efficient_portfolios)
-        df = df.rename(columns={
-            'expected_return': 'expected_return',
-            'volatility': 'volatility'
-        })
+        df = pd.DataFrame([{
+            'volatility': p['volatility'],
+            'expected_return': p['expected_return']
+        } for p in efficient_portfolios])
         return df
 
     def get_optimal_portfolio(self):
